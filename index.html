@@ -8,11 +8,21 @@
 </head>
 <body>
   <h1>Tic Tac Toe</h1>
-  <div class="board" id="board"></div>
-  <div class="info">
-    <p id="message">Joueur X commence</p>
+
+  <!-- Formulaire pour les noms -->
+  <div class="player-form" id="playerForm">
+    <input type="text" id="playerX" placeholder="Nom du Joueur X" required>
+    <input type="text" id="playerO" placeholder="Nom du Joueur O" required>
+    <button id="start">Commencer</button>
+  </div>
+
+  <div class="board" id="board" style="display:none;"></div>
+
+  <div class="info" id="info" style="display:none;">
+    <p id="message"></p>
     <button id="reset">Recommencer</button>
   </div>
+
 <script src="script.js"></script>
 </body>
 </html>
