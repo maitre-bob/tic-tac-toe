@@ -1,5 +1,5 @@
 // Factory joueur
-const Player = (name, mark) => ({name, mark});
+const Player = (name, mark) => ({name, mark, score: 0});
 
 // Module GameBoard (singleton)
 const GameBoard = (() => {
@@ -12,11 +12,16 @@ const GameBoard = (() => {
 
 // Module GameController
 const GameController = (() => {
-  let players = [Player("Joueur X","X"),Player("Joueur O","O")];
+  let players = [];
   let current = 0;
   let gameOver = false;
+
   const boardEl = document.getElementById("board");
   const msg = document.getElementById("message");
+  const info = document.getElementById("info");
+  const scoreboard = document.getElementById("scoreboard");
+  const scoreX = document.getElementById("scoreX");
+  const scoreO = document.getElementById("scoreO");
 
   const winCombos = [
     [0,1,2],[3,4,5],[6,7,8],
@@ -24,11 +29,20 @@ const GameController = (() => {
     [0,4,8],[2,4,6]
   ];
 
+  const updateScore = () => {
+    scoreX.textContent = `${players[0].name}: ${players[0].score}`;
+    scoreO.textContent = `${players[1].name}: ${players[1].score}`;
+  };
+
   const checkWinner = () => {
     const b = GameBoard.getBoard();
     for(const combo of winCombos){
       const [a,b1,c] = combo;
-      if(b[a] && b[a]===b[b1] && b[a]===b[c]) return players[current].name;
+      if(b[a] && b[a]===b[b1] && b[a]===b[c]){
+        players[current].score++;
+        updateScore();
+        return players[current].name;
+      }
     }
     if(b.every(cell=>cell)) return "Égalité";
     return null;
@@ -63,13 +77,26 @@ const GameController = (() => {
     GameBoard.reset();
     current = 0;
     gameOver = false;
-    msg.textContent = `Joueur X commence`;
+    msg.textContent = `Au tour de ${players[current].name}`;
     render();
   };
 
+  // Lancer le jeu après que les noms soient entrés
+  const startGame = () => {
+    const nameX = document.getElementById("playerX").value.trim() || "X";
+    const nameO = document.getElementById("playerO").value.trim() || "O";
+    players = [Player(nameX,"X"), Player(nameO,"O")];
+    document.getElementById("playerForm").style.display="none";
+    boardEl.style.display="grid";
+    info.style.display="flex";
+    scoreboard.style.display="flex";
+    updateScore();
+    msg.textContent = `Au tour de ${players[current].name}`;
+    render();
+  };
+
+  document.getElementById("start").addEventListener("click", startGame);
   document.getElementById("reset").addEventListener("click", reset);
 
   return {render};
 })();
-
-GameController.render();
